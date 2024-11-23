@@ -1,12 +1,12 @@
 ARG RUST_VERSION=1.82.0
 
 # Setup
-FROM rust:${RUST_VERSION} as setup
+FROM rust:${RUST_VERSION} AS setup
 WORKDIR /app
 COPY Cargo.toml ./
 
 # Build
-FROM setup as build
+FROM setup AS build
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo fetch
 RUN cargo build --release
@@ -16,13 +16,13 @@ RUN touch src/main.rs
 RUN cargo build --release
 
 # dev image
-FROM setup as dev
+FROM setup AS dev
 COPY src ./src/
 RUN cargo build
 ENTRYPOINT [ "cargo" ]
 
 # live image
-FROM debian:stable-slim as live
+FROM debian:stable-slim AS live
 RUN apt-get update && \
   apt-get install -y ca-certificates openssl && \
   apt-get clean
