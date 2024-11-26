@@ -1,6 +1,6 @@
-use captsone_rust::{domain::error::LoadBalancerResult, run};
+use captsone_rust::{cli, domain::error::LoadBalancerResult};
 
 #[tokio::main]
 async fn main() -> LoadBalancerResult<()> {
-    run().await
+    cli::run().await
 }

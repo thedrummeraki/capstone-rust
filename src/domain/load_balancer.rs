@@ -7,7 +7,7 @@ use hyper::{
 };
 use tokio::sync::RwLock;
 
-use super::error::LoadBalancerResult;
+use super::{config::Config, error::LoadBalancerResult};
 
 struct LoadBalancer {
     client: Client<hyper::client::HttpConnector>,
@@ -72,14 +72,13 @@ async fn handle(
     load_balancer.write().await.forward_request(req).await
 }
 
-pub async fn run() -> LoadBalancerResult<()> {
-    let worker_hosts = vec![
-        "http://localhost:3000".to_string(),
-        "http://localhost:3001".to_string(),
-    ];
+pub async fn run(config: Config) -> LoadBalancerResult<()> {
+    let worker_hosts = config.worker_hosts.to_owned();
+    println!("Serving loading balancer on:");
+    println!("{worker_hosts}");
 
     let load_balancer = Arc::new(RwLock::new(
-        LoadBalancer::new(worker_hosts).expect("failed to create load balancer"),
+        LoadBalancer::new(worker_hosts.as_ref().to_vec()).expect("failed to create load balancer"),
     ));
 
     let addr: SocketAddr = SocketAddr::from(([127, 0, 0, 1], 1337));
