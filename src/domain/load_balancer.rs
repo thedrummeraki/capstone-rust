@@ -81,7 +81,7 @@ pub async fn run(config: Config) -> LoadBalancerResult<()> {
         LoadBalancer::new(worker_hosts.as_ref().to_vec()).expect("failed to create load balancer"),
     ));
 
-    let addr: SocketAddr = SocketAddr::from(([127, 0, 0, 1], 1337));
+    let addr: SocketAddr = SocketAddr::from(([127, 0, 0, 1], config.port));
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_conn| {
         let load_balancer = load_balancer.clone();
